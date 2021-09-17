@@ -24,6 +24,9 @@
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
+extern DMA_HandleTypeDef hdma_sdadc1;
+
+extern DMA_HandleTypeDef hdma_sdadc2;
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
@@ -214,6 +217,23 @@ void HAL_SDADC_MspInit(SDADC_HandleTypeDef* hsdadc)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
+    /* SDADC1 DMA Init */
+    /* SDADC1 Init */
+    hdma_sdadc1.Instance = DMA2_Channel3;
+    hdma_sdadc1.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    hdma_sdadc1.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_sdadc1.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_sdadc1.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+    hdma_sdadc1.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+    hdma_sdadc1.Init.Mode = DMA_CIRCULAR;
+    hdma_sdadc1.Init.Priority = DMA_PRIORITY_LOW;
+    if (HAL_DMA_Init(&hdma_sdadc1) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_LINKDMA(hsdadc,hdma,hdma_sdadc1);
+
   /* USER CODE BEGIN SDADC1_MspInit 1 */
 
   /* USER CODE END SDADC1_MspInit 1 */
@@ -236,6 +256,23 @@ void HAL_SDADC_MspInit(SDADC_HandleTypeDef* hsdadc)
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+    /* SDADC2 DMA Init */
+    /* SDADC2 Init */
+    hdma_sdadc2.Instance = DMA2_Channel4;
+    hdma_sdadc2.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    hdma_sdadc2.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_sdadc2.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_sdadc2.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+    hdma_sdadc2.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+    hdma_sdadc2.Init.Mode = DMA_CIRCULAR;
+    hdma_sdadc2.Init.Priority = DMA_PRIORITY_LOW;
+    if (HAL_DMA_Init(&hdma_sdadc2) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_LINKDMA(hsdadc,hdma,hdma_sdadc2);
 
   /* USER CODE BEGIN SDADC2_MspInit 1 */
 
@@ -267,6 +304,8 @@ void HAL_SDADC_MspDeInit(SDADC_HandleTypeDef* hsdadc)
     */
     HAL_GPIO_DeInit(GPIOE, GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12);
 
+    /* SDADC1 DMA DeInit */
+    HAL_DMA_DeInit(hsdadc->hdma);
   /* USER CODE BEGIN SDADC1_MspDeInit 1 */
 
   /* USER CODE END SDADC1_MspDeInit 1 */
@@ -286,6 +325,8 @@ void HAL_SDADC_MspDeInit(SDADC_HandleTypeDef* hsdadc)
     */
     HAL_GPIO_DeInit(GPIOE, GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15);
 
+    /* SDADC2 DMA DeInit */
+    HAL_DMA_DeInit(hsdadc->hdma);
   /* USER CODE BEGIN SDADC2_MspDeInit 1 */
 
   /* USER CODE END SDADC2_MspDeInit 1 */
