@@ -113,8 +113,9 @@ int main(void)
   {
     /* USER CODE END WHILE */
       HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-      HAL_Delay(2000);
-
+      volatile int delay=500;
+      HAL_Delay(delay);
+//      delay += 500;
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
