@@ -21,6 +21,7 @@
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
+#include "sdadc.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -89,8 +90,9 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_ADC1_Init();
+  MX_SDADC1_Init();
   /* USER CODE BEGIN 2 */
-
+    start_ADCs();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -142,13 +144,15 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC1;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC1|RCC_PERIPHCLK_SDADC;
+  PeriphClkInit.SdadcClockSelection = RCC_SDADCSYSCLK_DIV2;
   PeriphClkInit.Adc1ClockSelection = RCC_ADC1PCLK2_DIV2;
 
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
   }
+  HAL_PWREx_EnableSDADC(PWR_SDADC_ANALOG1);
 }
 
 /* USER CODE BEGIN 4 */
