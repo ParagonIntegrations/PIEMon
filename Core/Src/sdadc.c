@@ -186,7 +186,7 @@ void HAL_SDADC_InjectedConvHalfCpltCallback(SDADC_HandleTypeDef* hadc)
 {
     if(hadc == &hsdadc1){
         counter +=1;
-        if(counter>16000){
+        if(counter>10){
             HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
             counter = 0;
         }
