@@ -21,6 +21,7 @@
 #include "sdadc.h"
 
 /* USER CODE BEGIN 0 */
+#include "tim.h"
 volatile uint16_t sdadc1_dma_buff[SDADC_DMA_BUFFSIZE];
 uint32_t counter=0;
 /* USER CODE END 0 */
@@ -49,7 +50,8 @@ void MX_SDADC1_Init(void)
   hsdadc1.Init.FastConversionMode = SDADC_FAST_CONV_DISABLE;
   hsdadc1.Init.SlowClockMode = SDADC_SLOW_CLOCK_DISABLE;
   hsdadc1.Init.ReferenceVoltage = SDADC_VREF_EXT;
-  hsdadc1.InjectedTrigger = SDADC_SOFTWARE_TRIGGER;
+  hsdadc1.InjectedTrigger = SDADC_EXTERNAL_TRIGGER;
+  hsdadc1.ExtTriggerEdge = SDADC_EXT_TRIG_RISING_EDGE;
   if (HAL_SDADC_Init(&hsdadc1) != HAL_OK)
   {
     Error_Handler();
@@ -60,7 +62,11 @@ void MX_SDADC1_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_SDADC_SelectInjectedTrigger(&hsdadc1, SDADC_SOFTWARE_TRIGGER) != HAL_OK)
+  if (HAL_SDADC_SelectInjectedExtTrigger(&hsdadc1, SDADC_EXT_TRIG_TIM13_CC1, SDADC_EXT_TRIG_RISING_EDGE) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_SDADC_SelectInjectedTrigger(&hsdadc1, SDADC_EXTERNAL_TRIGGER) != HAL_OK)
   {
     Error_Handler();
   }
@@ -191,7 +197,7 @@ void HAL_SDADC_InjectedConvHalfCpltCallback(SDADC_HandleTypeDef* hadc)
 
 void HAL_SDADC_InjectedConvCpltCallback(SDADC_HandleTypeDef* hadc)
 {
-//    HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
+    HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
     if(hadc == &hsdadc1) {
 //        HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
     }
@@ -203,6 +209,7 @@ void start_SDADCs (void) {
 
 //    pulse_tim8_ch2(1);
     HAL_Delay(20);
+    HAL_TIM_OC_Start(&htim13, TIM_CHANNEL_1);
 
     HAL_SDADC_InjectedStart_DMA(&hsdadc1, (uint32_t*)sdadc1_dma_buff, SDADC_DMA_BUFFSIZE);
 
