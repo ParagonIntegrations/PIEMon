@@ -71,7 +71,7 @@ void MX_SDADC1_Init(void)
     Error_Handler();
   }
   if (HAL_SDADC_InjectedConfigChannel(&hsdadc1, SDADC_CHANNEL_0|SDADC_CHANNEL_1
-                              |SDADC_CHANNEL_2, SDADC_CONTINUOUS_CONV_ON) != HAL_OK)
+                              |SDADC_CHANNEL_2, SDADC_CONTINUOUS_CONV_OFF) != HAL_OK)
   {
     Error_Handler();
   }
@@ -188,7 +188,7 @@ void HAL_SDADC_InjectedConvHalfCpltCallback(SDADC_HandleTypeDef* hadc)
         counter +=1;
         if(counter>10){
             HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
-            counter = 0;
+            counter = 1;
         }
 
     }
