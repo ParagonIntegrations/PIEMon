@@ -22,6 +22,7 @@
 #include "adc.h"
 #include "dma.h"
 #include "sdadc.h"
+#include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -91,6 +92,7 @@ int main(void)
   MX_DMA_Init();
   MX_ADC1_Init();
   MX_SDADC1_Init();
+  MX_TIM13_Init();
   /* USER CODE BEGIN 2 */
 //    start_ADCs();
     start_SDADCs();

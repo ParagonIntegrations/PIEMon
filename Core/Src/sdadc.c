@@ -22,6 +22,7 @@
 
 /* USER CODE BEGIN 0 */
 volatile uint16_t sdadc1_dma_buff[SDADC_DMA_BUFFSIZE];
+uint32_t counter=0;
 /* USER CODE END 0 */
 
 SDADC_HandleTypeDef hsdadc1;
@@ -178,16 +179,21 @@ void HAL_SDADC_MspDeInit(SDADC_HandleTypeDef* sdadcHandle)
 void HAL_SDADC_InjectedConvHalfCpltCallback(SDADC_HandleTypeDef* hadc)
 {
     if(hadc == &hsdadc1){
-        HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+        counter +=1;
+        if(counter>16000){
+            HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+            counter = 0;
+        }
+
     }
     //if(hadc == &hadc1) adc_conv_halfcplt_flag = true;
 }
 
 void HAL_SDADC_InjectedConvCpltCallback(SDADC_HandleTypeDef* hadc)
 {
-    HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
+//    HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
     if(hadc == &hsdadc1) {
-        HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+//        HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
     }
     // if(hadc == &hadc1) adc_conv_cplt_flag = true;
 }
