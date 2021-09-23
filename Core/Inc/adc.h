@@ -28,8 +28,8 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-#define ADC_DMA_BUFFSIZE 6000    // must me integer multiple of number of channels?
-volatile uint16_t adc1_dma_buff[ADC_DMA_BUFFSIZE];
+#define ADC_DMA_BUFFSIZE 12    // must me integer multiple of number of channels?
+//volatile uint16_t adc1_dma_buff[ADC_DMA_BUFFSIZE];
 /* USER CODE END Includes */
 
 extern ADC_HandleTypeDef hadc1;
