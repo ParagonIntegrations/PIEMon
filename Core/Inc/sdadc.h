@@ -34,7 +34,7 @@ extern "C" {
 extern SDADC_HandleTypeDef hsdadc1;
 
 /* USER CODE BEGIN Private defines */
-#define SDADC_DMA_BUFFSIZE 6    // must be integer multiple of number of channels?
+#define SDADC_DMA_BUFFSIZE 3    // must be integer multiple of number of channels?
 /* USER CODE END Private defines */
 
 void MX_SDADC1_Init(void);
