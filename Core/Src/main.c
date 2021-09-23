@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "can.h"
 #include "dma.h"
 #include "rtc.h"
@@ -96,13 +97,13 @@ int main(void)
   MX_SPI2_Init();
   MX_RTC_Init();
   MX_SDADC1_Init();
-  MX_SDADC2_Init();
   MX_USART1_UART_Init();
   MX_CAN_Init();
   MX_DMA_Init();
   MX_SPI3_Init();
   MX_TIM13_Init();
   MX_TIM19_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -111,9 +112,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-      HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-      volatile int delay=500;
-      HAL_Delay(delay);
+      for( int i = 500; i < 1000; i += 500 ){
+          HAL_Delay(i);
+          HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+      }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -164,16 +166,17 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_RTC
-                              |RCC_PERIPHCLK_SDADC;
+                              |RCC_PERIPHCLK_ADC1|RCC_PERIPHCLK_SDADC;
   PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
   PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
   PeriphClkInit.SdadcClockSelection = RCC_SDADCSYSCLK_DIV12;
+  PeriphClkInit.Adc1ClockSelection = RCC_ADC1PCLK2_DIV2;
+
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
   }
   HAL_PWREx_EnableSDADC(PWR_SDADC_ANALOG1);
-  HAL_PWREx_EnableSDADC(PWR_SDADC_ANALOG2);
   /** Enables the Clock Security System
   */
   HAL_RCC_EnableCSS();
