@@ -92,7 +92,8 @@ int main(void)
   MX_ADC1_Init();
   MX_SDADC1_Init();
   /* USER CODE BEGIN 2 */
-    start_ADCs();
+//    start_ADCs();
+    start_SDADCs();
   /* USER CODE END 2 */
 
   /* Infinite loop */

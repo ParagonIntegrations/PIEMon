@@ -175,7 +175,7 @@ void HAL_SDADC_MspDeInit(SDADC_HandleTypeDef* sdadcHandle)
 }
 
 /* USER CODE BEGIN 1 */
-void HAL_SDADC_ConvHalfCpltCallback(SDADC_HandleTypeDef* hadc)
+void HAL_SDADC_InjectedConvHalfCpltCallback(SDADC_HandleTypeDef* hadc)
 {
     if(hadc == &hsdadc1){
         HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
@@ -183,8 +183,9 @@ void HAL_SDADC_ConvHalfCpltCallback(SDADC_HandleTypeDef* hadc)
     //if(hadc == &hadc1) adc_conv_halfcplt_flag = true;
 }
 
-void HAL_SDADC_ConvCpltCallback(SDADC_HandleTypeDef* hadc)
+void HAL_SDADC_InjectedConvCpltCallback(SDADC_HandleTypeDef* hadc)
 {
+    HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
     if(hadc == &hsdadc1) {
         HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
     }
@@ -192,7 +193,7 @@ void HAL_SDADC_ConvCpltCallback(SDADC_HandleTypeDef* hadc)
 }
 
 void start_SDADCs (void) {
-    HAL_SDADC_InjectedStop_DMA(&hsdadc1);
+//    HAL_SDADC_InjectedStop_DMA(&hsdadc1);
 
 //    pulse_tim8_ch2(1);
     HAL_Delay(20);
