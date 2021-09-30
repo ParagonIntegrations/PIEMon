@@ -100,7 +100,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-      for( int i = 500; i < 1000; i += 500 ){
+      for( int i = 1000; i < 1500; i += 500 ){
           HAL_Delay(i);
           HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
       }
