@@ -19,7 +19,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "adc.h"
 #include "dma.h"
 #include "sdadc.h"
 #include "tim.h"
@@ -90,7 +89,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_ADC1_Init();
   MX_SDADC1_Init();
   MX_TIM19_Init();
   /* USER CODE BEGIN 2 */
@@ -150,10 +148,8 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC1|RCC_PERIPHCLK_SDADC;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SDADC;
   PeriphClkInit.SdadcClockSelection = RCC_SDADCSYSCLK_DIV12;
-  PeriphClkInit.Adc1ClockSelection = RCC_ADC1PCLK2_DIV2;
-
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
