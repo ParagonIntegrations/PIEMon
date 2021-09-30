@@ -93,6 +93,7 @@ int main(void)
   MX_ADC1_Init();
   MX_SDADC1_Init();
   MX_TIM13_Init();
+  MX_TIM19_Init();
   /* USER CODE BEGIN 2 */
 //    start_ADCs();
     start_SDADCs();

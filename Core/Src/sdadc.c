@@ -62,7 +62,7 @@ void MX_SDADC1_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_SDADC_SelectInjectedExtTrigger(&hsdadc1, SDADC_EXT_TRIG_TIM13_CC1, SDADC_EXT_TRIG_RISING_EDGE) != HAL_OK)
+  if (HAL_SDADC_SelectInjectedExtTrigger(&hsdadc1, SDADC_EXT_TRIG_TIM19_CC2, SDADC_EXT_TRIG_RISING_EDGE) != HAL_OK)
   {
     Error_Handler();
   }
@@ -205,15 +205,14 @@ void HAL_SDADC_InjectedConvCpltCallback(SDADC_HandleTypeDef* hadc)
 }
 
 void start_SDADCs (void) {
-//    HAL_SDADC_InjectedStop_DMA(&hsdadc1);
 
-//    pulse_tim8_ch2(1);
-    HAL_Delay(20);
-    HAL_TIM_OC_Start(&htim13, TIM_CHANNEL_1);
+    HAL_SDADC_InjectedStop_DMA(&hsdadc1);
+    HAL_Delay(100);
+    HAL_TIM_OC_Start(&htim19, TIM_CHANNEL_2);
+    HAL_Delay(100);
 
     HAL_SDADC_InjectedStart_DMA(&hsdadc1, (uint32_t*)sdadc1_dma_buff, SDADC_DMA_BUFFSIZE);
 
-//    pulse_tim8_ch2(1);
 }
 /* USER CODE END 1 */
 
