@@ -32,12 +32,14 @@ extern "C" {
 /* USER CODE END Includes */
 
 extern SDADC_HandleTypeDef hsdadc1;
+extern SDADC_HandleTypeDef hsdadc2;
 
 /* USER CODE BEGIN Private defines */
 #define SDADC_DMA_BUFFSIZE 3    // must be integer multiple of number of channels?
 /* USER CODE END Private defines */
 
 void MX_SDADC1_Init(void);
+void MX_SDADC2_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 void start_SDADCs (void);

@@ -74,6 +74,11 @@ void MX_TIM19_Init(void)
   {
     Error_Handler();
   }
+  sConfigOC.Pulse = 1999;
+  if (HAL_TIM_OC_ConfigChannel(&htim19, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN TIM19_Init 2 */
 
   /* USER CODE END TIM19_Init 2 */

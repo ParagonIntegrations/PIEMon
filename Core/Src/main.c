@@ -91,6 +91,7 @@ int main(void)
   MX_DMA_Init();
   MX_SDADC1_Init();
   MX_TIM19_Init();
+  MX_SDADC2_Init();
   /* USER CODE BEGIN 2 */
 //    start_ADCs();
     start_SDADCs();
@@ -155,6 +156,7 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   HAL_PWREx_EnableSDADC(PWR_SDADC_ANALOG1);
+  HAL_PWREx_EnableSDADC(PWR_SDADC_ANALOG2);
 }
 
 /* USER CODE BEGIN 4 */
