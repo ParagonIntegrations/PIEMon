@@ -22,8 +22,8 @@
 
 /* USER CODE BEGIN 0 */
 #include "tim.h"
-volatile uint16_t sdadc1_dma_buff[SDADC_DMA_BUFFSIZE];
-volatile uint16_t sdadc2_dma_buff[SDADC_DMA_BUFFSIZE];
+volatile uint16_t sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE];
+volatile uint16_t sdadc2_dma_buff[SDADC2_DMA_BUFFSIZE];
 uint32_t counter=0;
 /* USER CODE END 0 */
 
@@ -342,10 +342,14 @@ void HAL_SDADC_InjectedConvCpltCallback(SDADC_HandleTypeDef* hadc)
 {
 //    HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
     if(hadc == &hsdadc1) {
-        HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
+//        HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
     }
     if(hadc == &hsdadc2) {
-        HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+        counter +=1;
+        if(counter>=50){
+            HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+            counter = 0;
+        }
     }
 }
 
@@ -358,8 +362,8 @@ void start_SDADCs (void) {
     HAL_TIM_OC_Start(&htim19, TIM_CHANNEL_3);
     HAL_Delay(100);
 
-    HAL_SDADC_InjectedStart_DMA(&hsdadc1, (uint32_t*)sdadc1_dma_buff, SDADC_DMA_BUFFSIZE);
-    HAL_SDADC_InjectedStart_DMA(&hsdadc2, (uint32_t*)sdadc2_dma_buff, SDADC_DMA_BUFFSIZE);
+    HAL_SDADC_InjectedStart_DMA(&hsdadc1, (uint32_t*)sdadc1_dma_buff, SDADC1_DMA_BUFFSIZE);
+    HAL_SDADC_InjectedStart_DMA(&hsdadc2, (uint32_t*)sdadc2_dma_buff, SDADC2_DMA_BUFFSIZE);
 
 }
 /* USER CODE END 1 */

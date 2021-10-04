@@ -42,9 +42,9 @@ void MX_TIM19_Init(void)
 
   /* USER CODE END TIM19_Init 1 */
   htim19.Instance = TIM19;
-  htim19.Init.Prescaler = 36000-1;
+  htim19.Init.Prescaler = 0;
   htim19.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim19.Init.Period = 2000;
+  htim19.Init.Period = 14400;
   htim19.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim19.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim19) != HAL_OK)
@@ -74,7 +74,6 @@ void MX_TIM19_Init(void)
   {
     Error_Handler();
   }
-  sConfigOC.Pulse = 1999;
   if (HAL_TIM_OC_ConfigChannel(&htim19, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
   {
     Error_Handler();

@@ -36,10 +36,17 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define CLOCKFREQUENCY 72000000 // Clock speed of the STM32F373 in Hz
+#define SUPPLYFREQUENCY 50 // Frequency of the supply in Hz
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+// Calculated constants (at compile time)
+#define PLLTIMERAVG (CLOCKFREQUENCY/(NUMSAMPLES*SUPPLYFREQUENCY*2)) // The Timer19 reload value, the two is because the output compare toggles
+#define PLLTIMERMIN (PLLTIMERAVG*0.9) // Minimum Timer 1 value to start next set of measurements
+#define PLLTIMERMAX (PLLTIMERAVG*1.1) // Minimum Timer 1 value to start next set of measurements
+
 
 /* USER CODE END PM */
 
