@@ -37,16 +37,20 @@ extern SDADC_HandleTypeDef hsdadc2;
 /* USER CODE BEGIN Private defines */
 #define NUMSAMPLES 50 // Number of times to sample per cycle -- make sure this is an even number
 #define NUMCHANNELS 3 // The number of channels to measure
-#define SDADC1_DMA_BUFFSIZE (NUMSAMPLES * NUMCHANNELS) // must be integer multiple of number of channels?
+#define SDADC1_DMA_BUFFSIZE (NUMSAMPLES * NUMCHANNELS) // Set this so the DMA buffer is full after one cycle
 #define SDADC2_DMA_BUFFSIZE SDADC1_DMA_BUFFSIZE // Set this to the same value as for SDADC1
+
 /* USER CODE END Private defines */
 
 void MX_SDADC1_Init(void);
 void MX_SDADC2_Init(void);
 
 /* USER CODE BEGIN Prototypes */
+extern volatile uint16_t sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE];
+extern volatile uint16_t sdadc2_dma_buff[SDADC2_DMA_BUFFSIZE];
+
 void start_SDADCs (void);
-void process_dma_data( uint16_t offset);
+void pllcalcs( uint16_t offset);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
