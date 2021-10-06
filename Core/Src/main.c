@@ -42,6 +42,7 @@
 #define CLOCKFREQUENCY 72000000 // Clock speed of the STM32F373 in Hz
 #define SUPPLYFREQUENCY 50 // Frequency of the supply in Hz
 #define PLLLOCKCOUNT 20 // Number of samples for PLL to be considered locked ~ 4 seconds. N.B--Less than 255
+#define ADCMIDPOINT 0 //
 #define PIDKP 3 // PID KP
 #define PIDKI 1 // PID KI
 #define PIDKD 0 // PID KD
@@ -92,7 +93,9 @@ typedef struct channel_
     uint32_t positive_V;
     uint32_t last_positive_V;
     uint32_t cycles;
-} channel_type;
+} channel_t;
+
+channel_t channels[NUMCHANNELS];
 
 uint8_t pllunlocked = PLLLOCKCOUNT;
 uint16_t timercount = PLLTIMERAVG;
@@ -109,16 +112,15 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void pllcalcs(uint16_t offset){
 
-    // PID Controller for the phase locked loop
+    // PID Controller for the phase locked loop, only update on completion of cycle
     static float e0, e1, e2;
-    // Check for zero crossing and adjust the Timer if necessary
     if (offset == SDADC1_DMA_BUFFSIZE/2){
         e2 = e1;
         e1 = e0;
-        uint16_t last_reading = sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE-1];
-        uint16_t second_last_reading = sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE-2];
+        int16_t last_reading = sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE-1];
+        int16_t second_last_reading = sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE-2];
         // Do interpolation or extrapolation to determine how much the timer needs to adjust
-        e0 = (last_reading-0)/((float)second_last_reading-last_reading);
+        e0 = (last_reading - ADCMIDPOINT) / ((float)second_last_reading - last_reading);
         e0 = (last_reading > second_last_reading) ? e0 : e0 + (NUMSAMPLES/2);
         e0 = constrain(e0,-NUMSAMPLES, NUMSAMPLES);
 
@@ -127,18 +129,25 @@ void pllcalcs(uint16_t offset){
         timercount = constrain(timercount, PLLTIMERMIN, PLLTIMERMAX);
 
         // Check if PLL is in lock range and decrement the counter if it is, otherwise set counter to max
-        if (e0>PLLLOCKRANGE){
+        if (e0 > PLLLOCKRANGE){
             pllunlocked = PLLLOCKCOUNT;
         } else if (pllunlocked) {
-            pllunlocked --;
+            pllunlocked--;
         }
         // Update the timer
         __HAL_TIM_SET_AUTORELOAD(&htim19, timercount);
-
-
-
-
     }
+
+    // Loop through the buffer
+    for (int i = 0; i < SDADC1_DMA_BUFFSIZE/2 ; i += NUMCHANNELS){
+        // Cycle through the channels
+        for (int n = 0; n < NUMCHANNELS; n++){
+            channel_t *channel = &channels[n];
+
+
+        }
+    }
+
 }
 /* USER CODE END 0 */
 

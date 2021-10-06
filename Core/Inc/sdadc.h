@@ -46,8 +46,8 @@ void MX_SDADC1_Init(void);
 void MX_SDADC2_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-extern volatile uint16_t sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE];
-extern volatile uint16_t sdadc2_dma_buff[SDADC2_DMA_BUFFSIZE];
+extern volatile int16_t sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE];
+extern volatile int16_t sdadc2_dma_buff[SDADC2_DMA_BUFFSIZE];
 
 void start_SDADCs (void);
 void pllcalcs( uint16_t offset);

@@ -22,8 +22,8 @@
 
 /* USER CODE BEGIN 0 */
 #include "tim.h"
-volatile uint16_t sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE];
-volatile uint16_t sdadc2_dma_buff[SDADC2_DMA_BUFFSIZE];
+volatile int16_t sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE];
+volatile int16_t sdadc2_dma_buff[SDADC2_DMA_BUFFSIZE];
 uint32_t counter=0;
 /* USER CODE END 0 */
 
