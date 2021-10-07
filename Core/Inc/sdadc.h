@@ -35,9 +35,9 @@ extern SDADC_HandleTypeDef hsdadc1;
 extern SDADC_HandleTypeDef hsdadc2;
 
 /* USER CODE BEGIN Private defines */
-#define NUMSAMPLES 50 // Number of times to sample per cycle -- make sure this is an even number
+#define SAMPLESPERCYCLE 50 // Number of times to sample per cycle -- make sure this is an even number
 #define NUMCHANNELS 3 // The number of channels to measure
-#define SDADC1_DMA_BUFFSIZE (NUMSAMPLES * NUMCHANNELS) // Set this so the DMA buffer is full after one cycle
+#define SDADC1_DMA_BUFFSIZE (SAMPLESPERCYCLE * NUMCHANNELS) // Set this so the DMA buffer is full after one cycle
 #define SDADC2_DMA_BUFFSIZE SDADC1_DMA_BUFFSIZE // Set this to the same value as for SDADC1
 
 /* USER CODE END Private defines */

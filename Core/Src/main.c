@@ -25,6 +25,7 @@
 #include "gpio.h"
 #include "math.h"
 #include "stdbool.h"
+#include "string.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -42,10 +43,11 @@
 #define CLOCKFREQUENCY 72000000 // Clock speed of the STM32F373 in Hz
 #define SUPPLYFREQUENCY 50 // Frequency of the supply in Hz
 #define PLLLOCKCOUNT 20 // Number of samples for PLL to be considered locked ~ 4 seconds. N.B--Less than 255
-#define ADCMIDPOINT 0 //
 #define PIDKP 3 // PID KP
 #define PIDKI 1 // PID KI
 #define PIDKD 0 // PID KD
+#define ADCOFFSET 32768 // Half of the 16 bits range that the sdadc has
+#define LOOPCYCLES 250 // Cycles to complete before sending data
 
 /* USER CODE END PD */
 
@@ -65,7 +67,7 @@
 
 
 // Calculated constants (at compile time)
-#define PLLTIMERAVG (CLOCKFREQUENCY/(NUMSAMPLES*SUPPLYFREQUENCY*2)) // The Timer19 reload value, the two is because the output compare toggles
+#define PLLTIMERAVG (CLOCKFREQUENCY/(SAMPLESPERCYCLE*SUPPLYFREQUENCY*2)) // The Timer19 reload value, the two is because the output compare toggles
 #define PLLTIMERMIN (PLLTIMERAVG*0.8) // Minimum Timer 1 value to start next set of measurements
 #define PLLTIMERMAX (PLLTIMERAVG*1.2) // Minimum Timer 1 value to start next set of measurements
 #define PLLLOCKRANGE 0.5 // The PLL needs to be within 0.5 samples from the setpoint (+/- 1% timing accuracy @ 50 samples per cycle)
@@ -83,22 +85,22 @@
 
 typedef struct channel_
 {
-    int64_t sum_P;
+    int64_t sum_P_import;
+    int64_t sum_P_export;
     uint64_t sum_V_sq;
     uint64_t sum_I_sq;
     int32_t sum_V;
     int32_t sum_I;
     uint32_t count;
-
-    uint32_t positive_V;
-    uint32_t last_positive_V;
-    uint32_t cycles;
 } channel_t;
 
 channel_t channels[NUMCHANNELS];
+channel_t channels_cycle[NUMCHANNELS];
+channel_t channels_set[NUMCHANNELS];
 
 uint8_t pllunlocked = PLLLOCKCOUNT;
 uint16_t timercount = PLLTIMERAVG;
+bool newcycle = false;
 
 /* USER CODE END PV */
 
@@ -117,12 +119,12 @@ void pllcalcs(uint16_t offset){
     if (offset == SDADC1_DMA_BUFFSIZE/2){
         e2 = e1;
         e1 = e0;
-        int16_t last_reading = sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE-1];
-        int16_t second_last_reading = sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE-2];
+        int32_t last_reading = sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE-1];
+        int32_t second_last_reading = sdadc1_dma_buff[SDADC1_DMA_BUFFSIZE-2];
         // Do interpolation or extrapolation to determine how much the timer needs to adjust
-        e0 = (last_reading - ADCMIDPOINT) / ((float)second_last_reading - last_reading);
-        e0 = (last_reading > second_last_reading) ? e0 : e0 + (NUMSAMPLES/2);
-        e0 = constrain(e0,-NUMSAMPLES, NUMSAMPLES);
+        e0 = (last_reading - ADCOFFSET) / ((float)second_last_reading - last_reading);
+        e0 = (last_reading > second_last_reading) ? e0 : e0 + (SAMPLESPERCYCLE / 2);
+        e0 = constrain(e0, -SAMPLESPERCYCLE, SAMPLESPERCYCLE);
 
         // Calculate the new timer value
         timercount += (e0 * PIDK1 + e1 * PIDK2 + e2 * PIDK3);
@@ -138,16 +140,92 @@ void pllcalcs(uint16_t offset){
         __HAL_TIM_SET_AUTORELOAD(&htim19, timercount);
     }
 
-    // Loop through the buffer
-    for (int i = 0; i < SDADC1_DMA_BUFFSIZE/2 ; i += NUMCHANNELS){
-        // Cycle through the channels
-        for (int n = 0; n < NUMCHANNELS; n++){
-            channel_t *channel = &channels[n];
+    // Loop through the buffer and save the data
+    // Assign variables needed for the calculations
+    int32_t sample_V, sample_I, signed_V, signed_I;
+    // Cycle through the channels
+    for (int n = 0; n < NUMCHANNELS; n++){
+        // Cycle through all the data in the buffer for the current channel
+        for (int i = 0; i < SDADC1_DMA_BUFFSIZE/2 ; i += NUMCHANNELS ){
 
-
+            // ----------------------------------------
+            // Voltage
+            sample_V = sdadc1_dma_buff[offset + i + n];
+            signed_V = sample_V - ADCOFFSET;
+            channels[n].sum_V += signed_V;
+            channels[n].sum_V_sq += signed_V * signed_V;
+            // ----------------------------------------
+            // Current
+            sample_I = sdadc2_dma_buff[offset + i + n];
+            signed_I = sample_I - ADCOFFSET;
+            channels[n].sum_I += signed_I;
+            channels[n].sum_I_sq += signed_I * signed_I;
+            // ----------------------------------------
+            // Power
+            channels[n].sum_P_import += signed_V * signed_I;
+            // ----------------------------------------
+            // Sample Count
+            channels[n].count++;
         }
     }
 
+    // If this is the second half of the buffer the data needs to be copied to the cycle stuct
+    if (offset == SDADC1_DMA_BUFFSIZE/2){
+        // Copy accumulators for use in main loop
+        memcpy(&channels_cycle, &channels, sizeof(channels));
+        // Reset the accumulators
+        memset(&channels, 0, sizeof(channels));
+        newcycle = true;
+    }
+
+
+}
+
+void addcycle () {
+
+    newcycle = false;
+    for (int n = 0; n < NUMCHANNELS; n++){
+        channels_set[n].sum_V += channels_cycle[n].sum_V;
+        channels_set[n].sum_V_sq += channels_cycle[n].sum_V_sq;
+        channels_set[n].sum_I += channels_cycle[n].sum_I;
+        channels_set[n].sum_I_sq += channels_cycle[n].sum_I_sq;
+        if (channels_cycle[n].sum_P_import > 0){
+            channels_set[n].sum_P_import += channels_cycle[n].sum_P_import;
+        } else {
+            channels_set[n].sum_P_export -= channels_cycle[n].sum_P_import;
+        }
+        channels_set[n].count += channels_cycle[n].count;
+    }
+    // Reset the cycle accumulators
+    memset(&channels_cycle, 0, sizeof(channels_cycle));
+
+/*
+    TotalV1Squared += CycleV1Squared;
+    TotalV2Squared += CycleV2Squared;
+    TotalV3Squared += CycleV3Squared;
+    TotalI1Squared += CycleI1Squared;
+    TotalI2Squared += CycleI2Squared;
+    TotalI3Squared += CycleI3Squared;
+    if (CycleP1>=0){
+        TotalP1Import += CycleP1;
+    } else {
+        TotalP1Export -= CycleP1;
+    }
+    if (CycleP2>=0){
+        TotalP2Import += CycleP2;
+    } else {
+        TotalP2Export -= CycleP2;
+    }
+    if (CycleP3>=0){
+        TotalP3Import += CycleP3;
+    } else {
+        TotalP3Export -= CycleP3;
+    }
+    SumTimerCount += (OCR1A+1);
+
+    CycleCount++;
+    NewCycle = false;
+*/
 }
 /* USER CODE END 0 */
 
