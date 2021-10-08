@@ -327,22 +327,16 @@ void HAL_SDADC_MspDeInit(SDADC_HandleTypeDef* sdadcHandle)
 /* USER CODE BEGIN 1 */
 void HAL_SDADC_InjectedConvHalfCpltCallback(SDADC_HandleTypeDef* hadc)
 {
-//    if(hadc == &hsdadc1){
-//        counter +=1;
-//        if(counter>10){
-//            HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
-//            counter = 1;
-//        }
-//
-//    }
-    //if(hadc == &hadc1) adc_conv_halfcplt_flag = true;
+    if(hadc == &hsdadc1){
+        pllcalcs(0);
+    }
+
 }
 
 void HAL_SDADC_InjectedConvCpltCallback(SDADC_HandleTypeDef* hadc)
 {
-//    HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
     if(hadc == &hsdadc1) {
-//        HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
+        pllcalcs(SDADC1_DMA_BUFFSIZE/2);
     }
     if(hadc == &hsdadc2) {
         counter +=1;

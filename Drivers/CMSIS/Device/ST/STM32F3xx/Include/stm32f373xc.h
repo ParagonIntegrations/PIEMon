@@ -974,7 +974,7 @@ typedef struct
 #define ADC_CR1_JDISCEN                ADC_CR1_JDISCEN_Msk                     /*!< Discontinuous mode on injected channels */
 #define ADC_CR1_DISCNUM_Pos            (13U)                                   
 #define ADC_CR1_DISCNUM_Msk            (0x7UL << ADC_CR1_DISCNUM_Pos)           /*!< 0x0000E000 */
-#define ADC_CR1_DISCNUM                ADC_CR1_DISCNUM_Msk                     /*!< DISCNUM[2:0] bits (Discontinuous mode channel count) */
+#define ADC_CR1_DISCNUM                ADC_CR1_DISCNUM_Msk                     /*!< DISCNUM[2:0] bits (Discontinuous mode channel sum_timer) */
 #define ADC_CR1_DISCNUM_0              (0x1UL << ADC_CR1_DISCNUM_Pos)           /*!< 0x00002000 */
 #define ADC_CR1_DISCNUM_1              (0x2UL << ADC_CR1_DISCNUM_Pos)           /*!< 0x00004000 */
 #define ADC_CR1_DISCNUM_2              (0x4UL << ADC_CR1_DISCNUM_Pos)           /*!< 0x00008000 */
@@ -10442,7 +10442,7 @@ typedef struct
 #define TSC_IER_EOAIE            TSC_IER_EOAIE_Msk                             /*!<End of acquisition interrupt enable */
 #define TSC_IER_MCEIE_Pos        (1U)                                          
 #define TSC_IER_MCEIE_Msk        (0x1UL << TSC_IER_MCEIE_Pos)                   /*!< 0x00000002 */
-#define TSC_IER_MCEIE            TSC_IER_MCEIE_Msk                             /*!<Max count error interrupt enable */
+#define TSC_IER_MCEIE            TSC_IER_MCEIE_Msk                             /*!<Max sum_timer error interrupt enable */
 
 /*******************  Bit definition for TSC_ICR register  ********************/
 #define TSC_ICR_EOAIC_Pos        (0U)                                          
@@ -10450,7 +10450,7 @@ typedef struct
 #define TSC_ICR_EOAIC            TSC_ICR_EOAIC_Msk                             /*!<End of acquisition interrupt clear */
 #define TSC_ICR_MCEIC_Pos        (1U)                                          
 #define TSC_ICR_MCEIC_Msk        (0x1UL << TSC_ICR_MCEIC_Pos)                   /*!< 0x00000002 */
-#define TSC_ICR_MCEIC            TSC_ICR_MCEIC_Msk                             /*!<Max count error interrupt clear */
+#define TSC_ICR_MCEIC            TSC_ICR_MCEIC_Msk                             /*!<Max sum_timer error interrupt clear */
 
 /*******************  Bit definition for TSC_ISR register  ********************/
 #define TSC_ISR_EOAF_Pos         (0U)                                          
@@ -10458,7 +10458,7 @@ typedef struct
 #define TSC_ISR_EOAF             TSC_ISR_EOAF_Msk                              /*!<End of acquisition flag */
 #define TSC_ISR_MCEF_Pos         (1U)                                          
 #define TSC_ISR_MCEF_Msk         (0x1UL << TSC_ISR_MCEF_Pos)                    /*!< 0x00000002 */
-#define TSC_ISR_MCEF             TSC_ISR_MCEF_Msk                              /*!<Max count error flag */
+#define TSC_ISR_MCEF             TSC_ISR_MCEF_Msk                              /*!<Max sum_timer error flag */
 
 /*******************  Bit definition for TSC_IOHCR register  ******************/
 #define TSC_IOHCR_G1_IO1_Pos     (0U)                                          
