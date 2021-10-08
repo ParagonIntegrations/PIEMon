@@ -226,7 +226,7 @@ void addcycle () {
 }
 
 void calculateVIPF(){
-
+    cyclecount = 0;
     float totaltime = 0;
     for (int n = 0; n < NUMCHANNELS; n++) {
         channels_vipf[n].Vrms = VRATIO * sqrtf(((float)channels_loop[n].sum_V_sq) / LOOPSAMPLES);
@@ -323,6 +323,7 @@ int main(void)
       }
       if (cyclecount >= LOOPCYCLES){
           calculateVIPF();
+//          HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
 //          switchrelays();
 //          sendresults();
       }
