@@ -1061,7 +1061,7 @@ typedef struct
   *         flag to be set indicating that HSI clock is stable and can be used as
   *         system clock source.  
   * @note   When the HSI is stopped, HSIRDY flag goes low after 6 HSI oscillator
-  *         clock cyclecount.
+  *         clock cycles.  
   */
 #define __HAL_RCC_HSI_ENABLE()  (*(__IO uint32_t *) RCC_CR_HSION_BB = ENABLE)
 #define __HAL_RCC_HSI_DISABLE() (*(__IO uint32_t *) RCC_CR_HSION_BB = DISABLE)
@@ -1094,7 +1094,7 @@ typedef struct
 /** @brief Macro to disable the Internal Low Speed oscillator (LSI).
   * @note   LSI can not be disabled if the IWDG is running.  
   * @note   When the LSI is stopped, LSIRDY flag goes low after 6 LSI oscillator
-  *         clock cyclecount.
+  *         clock cycles. 
   */
 #define __HAL_RCC_LSI_DISABLE() (*(__IO uint32_t *) RCC_CSR_LSION_BB = DISABLE)
 
@@ -1124,7 +1124,7 @@ typedef struct
   * @param  __STATE__ specifies the new state of the HSE.
   *          This parameter can be one of the following values:
   *            @arg @ref RCC_HSE_OFF turn OFF the HSE oscillator, HSERDY flag goes low after
-  *                              6 HSE oscillator clock cyclecount.
+  *                              6 HSE oscillator clock cycles.
   *            @arg @ref RCC_HSE_ON turn ON the HSE oscillator
   *            @arg @ref RCC_HSE_BYPASS HSE oscillator bypassed with external clock
   */
@@ -1172,7 +1172,7 @@ typedef struct
   * @param  __STATE__ specifies the new state of the LSE.
   *         This parameter can be one of the following values:
   *            @arg @ref RCC_LSE_OFF turn OFF the LSE oscillator, LSERDY flag goes low after
-  *                              6 LSE oscillator clock cyclecount.
+  *                              6 LSE oscillator clock cycles.
   *            @arg @ref RCC_LSE_ON turn ON the LSE oscillator.
   *            @arg @ref RCC_LSE_BYPASS LSE oscillator bypassed with external clock.
   */

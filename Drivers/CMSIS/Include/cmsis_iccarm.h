@@ -497,15 +497,15 @@ __packed struct  __iar_u32 { uint32_t v; };
     {
       if (data == 0U) { return 32U; }
 
-      uint32_t sum_timer = 0U;
+      uint32_t count = 0U;
       uint32_t mask = 0x80000000U;
 
       while ((data & mask) == 0U)
       {
-        sum_timer += 1U;
+        count += 1U;
         mask = mask >> 1U;
       }
-      return sum_timer;
+      return count;
     }
 
     __STATIC_INLINE uint32_t __RBIT(uint32_t v)

@@ -23,13 +23,13 @@
 #include "sdadc.h"
 #include "tim.h"
 #include "gpio.h"
-#include "math.h"
-#include "stdbool.h"
-#include "string.h"
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "math.h"
+#include "stdbool.h"
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -304,6 +304,7 @@ int main(void)
   MX_SDADC1_Init();
   MX_TIM19_Init();
   MX_SDADC2_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
     start_SDADCs();
   /* USER CODE END 2 */
@@ -323,7 +324,7 @@ int main(void)
       }
       if (cyclecount >= LOOPCYCLES){
           calculateVIPF();
-//          HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
+//          HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
 //          switchrelays();
 //          sendresults();
       }

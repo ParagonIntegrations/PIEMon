@@ -1683,7 +1683,7 @@ mode.
   *         (*) Value not defined for all devices
   * @note  When fast mode is enabled an active edge on the trigger input acts
   *        like a compare match on CCx output. Delay to sample the trigger
-  *        input and to activate CCx output is reduced to 3 clock cyclecount.
+  *        input and to activate CCx output is reduced to 3 clock cycles.
   * @note  Fast mode acts only if the channel is configured in PWM1 or PWM2 mode.
   * @retval None
   */
@@ -1718,7 +1718,7 @@ mode.
   * @note  When fast mode is disabled CCx output behaves normally depending
   *        on counter and CCRx values even when the trigger is ON. The minimum
   *        delay to activate CCx output when an active edge occurs on the
-  *        trigger input is 5 clock cyclecount.
+  *        trigger input is 5 clock cycles.
   * @retval None
   */
 #if defined(TIM_CCER_CC5E) && defined(TIM_CCER_CC6E)

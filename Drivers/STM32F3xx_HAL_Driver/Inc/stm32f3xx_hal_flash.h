@@ -134,7 +134,7 @@ typedef struct
   */
 #define FLASH_LATENCY_0            (0x00000000U)    /*!< FLASH Zero Latency cycle */
 #define FLASH_LATENCY_1            FLASH_ACR_LATENCY_0       /*!< FLASH One Latency cycle */
-#define FLASH_LATENCY_2            FLASH_ACR_LATENCY_1       /*!< FLASH Two Latency cyclecount */
+#define FLASH_LATENCY_2            FLASH_ACR_LATENCY_1       /*!< FLASH Two Latency cycles */
 
 /**
   * @}
@@ -204,7 +204,7 @@ typedef struct
   *         This parameter can be one of the following values:
   *         @arg @ref FLASH_LATENCY_0 FLASH Zero Latency cycle
   *         @arg @ref FLASH_LATENCY_1 FLASH One Latency cycle
-  *         @arg @ref FLASH_LATENCY_2 FLASH Two Latency cyclecount
+  *         @arg @ref FLASH_LATENCY_2 FLASH Two Latency cycles
   * @retval None
   */ 
 #define __HAL_FLASH_SET_LATENCY(__LATENCY__)    (FLASH->ACR = (FLASH->ACR&(~FLASH_ACR_LATENCY)) | (__LATENCY__))
@@ -216,7 +216,7 @@ typedef struct
   *         This parameter can be one of the following values:
   *         @arg @ref FLASH_LATENCY_0 FLASH Zero Latency cycle
   *         @arg @ref FLASH_LATENCY_1 FLASH One Latency cycle
-  *         @arg @ref FLASH_LATENCY_2 FLASH Two Latency cyclecount
+  *         @arg @ref FLASH_LATENCY_2 FLASH Two Latency cycles
   */ 
 #define __HAL_FLASH_GET_LATENCY()     (READ_BIT((FLASH->ACR), FLASH_ACR_LATENCY))
 
