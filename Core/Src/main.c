@@ -307,17 +307,18 @@ int main(void)
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
     start_SDADCs();
+    HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_4);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-      for( int i = 1000; i < 1500; i += 500 ){
-          HAL_Delay(i);
-          HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-
-      }
+//      for( int i = 1000; i < 1500; i += 500 ){
+//          HAL_Delay(i);
+//          HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+//
+//      }
       // Calculate averages and transmit data to base station
       if (newcycle) {
           addcycle();
