@@ -64,8 +64,10 @@ void Error_Handler(void);
 #define LED2_GPIO_Port GPIOD
 #define LED3_Pin GPIO_PIN_14
 #define LED3_GPIO_Port GPIOD
+#define SD_CS_Pin GPIO_PIN_15
+#define SD_CS_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
-
+#define SD_SPI_HANDLE hspi3
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
