@@ -22,8 +22,8 @@
 #include "dma.h"
 #include "sdadc.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
-
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -305,30 +305,33 @@ int main(void)
   MX_TIM19_Init();
   MX_SDADC2_Init();
   MX_TIM4_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
     start_SDADCs();
     HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_4);
+//    char *serialsenddata = "Hello";
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-//      for( int i = 1000; i < 1500; i += 500 ){
-//          HAL_Delay(i);
-//          HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-//
-//      }
-      // Calculate averages and transmit data to base station
-      if (newcycle) {
-          addcycle();
+      for( int i = 1000; i < 1500; i += 500 ){
+          HAL_Delay(i);
+          HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+//          HAL_UART_Transmit(&huart1,(uint8_t*)serialsenddata, strlen(serialsenddata),1000);
+
       }
-      if (cyclecount >= LOOPCYCLES){
-          calculateVIPF();
+      // Calculate averages and transmit data to base station
+//      if (newcycle) {
+//          addcycle();
+//      }
+//      if (cyclecount >= LOOPCYCLES){
+//          calculateVIPF();
 //          HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
 //          switchrelays();
 //          sendresults();
-      }
+//      }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -373,7 +376,8 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SDADC;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_SDADC;
+  PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
   PeriphClkInit.SdadcClockSelection = RCC_SDADCSYSCLK_DIV12;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
