@@ -114,6 +114,11 @@ typedef struct vipf_
     float apparentpower; // In VA
     float power_factor; // Factor
     float frequency; // In Hz
+    float time; // In s
+    float units_import; // In Wh
+    float units_export; // In Wh
+    float import_counter; // In Wh
+    float export_counter; // In Wh
 
 } vipf_t;
 
@@ -132,7 +137,6 @@ uint16_t cyclecount = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void myprintf(const char *fmt, ...);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -243,8 +247,8 @@ void addcycle () {
 }
 
 void calculateVIPF(){
+    float old_cyclecount = cyclecount;
     cyclecount = 0;
-    float totaltime = 0;
     for (int n = 0; n < NUMCHANNELS; n++) {
         channels_vipf[n].Vrms = VRATIO * sqrtf(((float)channels_loop[n].sum_V_sq) / LOOPSAMPLES);
         channels_vipf[n].Irms = IRATIO * sqrtf(((float)channels_loop[n].sum_I_sq) / LOOPSAMPLES);
@@ -254,37 +258,15 @@ void calculateVIPF(){
         channels_vipf[n].power_factor = (channels_vipf[n].realpower_import + channels_vipf[n].realpower_export) / channels_vipf[n].apparentpower;
         // The doubling is because the adc only converts once every two times that the timer cycles
         // The addition of LOOPSAMPLES is because the timer is zero referenced
-        totaltime = (((float)channels_loop[n].sum_timer + LOOPSAMPLES) * 2) / ADCTIMERFREQUENCY; // In seconds
-        channels_vipf[n].frequency = (float)cyclecount / totaltime;
+        channels_vipf[n].time = (((float)channels_loop[n].sum_timer + LOOPSAMPLES) * 2) / ADCTIMERFREQUENCY;
+        channels_vipf[n].frequency = old_cyclecount / channels_vipf[n].time;
+        channels_vipf[n].units_import = (channels_vipf[n].realpower_import * channels_vipf[n].time) / 3.6;
+        channels_vipf[n].units_export = (channels_vipf[n].realpower_export * channels_vipf[n].time) / 3.6;
+        channels_vipf[n].import_counter += channels_vipf[n].units_import;
+        channels_vipf[n].export_counter += channels_vipf[n].units_export;
     }
-
-
-//    // Calcualte the units used, 0.5 added for correct rounding
-//    UnitsUsed1 = long((RealPower1Import * TotalTime / 3.6) + 0.5);
-//    UnitsUsed2 = long((RealPower2Import * TotalTime / 3.6) + 0.5);
-//    UnitsUsed3 = long((RealPower3Import * TotalTime / 3.6) + 0.5);
-//
-//    // Update The unit counter
-//    Units1 -= UnitsUsed1;
-//    Units2 -= UnitsUsed2;
-//    Units3 -= UnitsUsed3;
-//
-//    // Clear the counters
-//    TotalV1Squared = 0;
-//    TotalV2Squared = 0;
-//    TotalV3Squared = 0;
-//    TotalI1Squared = 0;
-//    TotalI2Squared = 0;
-//    TotalI3Squared = 0;
-//    TotalP1Import = 0;
-//    TotalP2Import = 0;
-//    TotalP3Import = 0;
-//    TotalP1Export = 0;
-//    TotalP2Export = 0;
-//    TotalP3Export = 0;
-//    SumTimerCount = 0;
-//    CycleCount = 0;
-
+    // Reset the loop accumulators
+    memset(&channels_loop, 0, sizeof(channels_cycle));
 }
 
 /* USER CODE END 0 */
@@ -387,17 +369,20 @@ int main(void)
     f_close(&fil);
 
     //Now let's try and write a file "write.txt"
-    fres = f_open(&fil, "write.txt", FA_WRITE | FA_OPEN_ALWAYS | FA_CREATE_ALWAYS);
+    fres = f_open(&fil, "write.txt", FA_WRITE | FA_OPEN_ALWAYS);
     if(fres == FR_OK) {
         myprintf("I was able to open 'write.txt' for writing\r\n");
     } else {
         myprintf("f_open error (%i)\r\n", fres);
     }
+    uint32_t  filesize = f_size(&fil);
+    f_lseek(&fil, filesize);
+
 
     //Copy in a string
-    strncpy((char*)readBuf, "a new file is made!", 19);
+    strncpy((char*)readBuf, "a new file is made!\r\n", 21);
     UINT bytesWrote;
-    fres = f_write(&fil, readBuf, 19, &bytesWrote);
+    fres = f_write(&fil, readBuf, 21, &bytesWrote);
     if(fres == FR_OK) {
         myprintf("Wrote %i bytes to 'write.txt'!\r\n", bytesWrote);
     } else {
