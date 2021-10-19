@@ -132,6 +132,8 @@ uint16_t timercount = PLLTIMERAVG;
 uint16_t prevtimercount = PLLTIMERAVG;
 bool newcycle = false;
 uint16_t cyclecount = 0;
+uint8_t pwm_mode = 0; // 0 for pwm, 1 for
+
 
 /* USER CODE END PV */
 
