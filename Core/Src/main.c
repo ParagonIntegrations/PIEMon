@@ -143,7 +143,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void myprintf(const char *fmt, ...) {
+void uartprintf(const char *fmt, ...) {
     static char buffer[256];
     va_list args;
     va_start(args, fmt);
@@ -274,20 +274,22 @@ void storeresults(){
     FATFS FatFs; 	//Fatfs handle
     FIL fil; 		//File handle
     volatile FRESULT fres; //Result after operations
+    UINT bytesWrote;
+    char filename[20];
 
     // Open the file system
     f_mount(&FatFs, "", 1); //1=mount now
 
     for (int n = 0; n < NUMCHANNELS; n++){
-        char filename[9];
+        // Generate the filename
         sprintf(filename, "Channel%i", n);
 
         //Now let's try and write a file
         fres = f_open(&fil, filename, FA_WRITE | FA_OPEN_ALWAYS);
         if(fres == FR_OK) {
-            myprintf("I was able to open 'write.txt' for writing\r\n");
+            uartprintf("I was able to open 'write.txt' for writing\r\n");
         } else {
-            myprintf("f_open error (%i)\r\n", fres);
+            uartprintf("f_open error (%i)\r\n", fres);
         }
         // Go to the end of the file so we can append
         f_lseek(&fil, f_size(&fil));
@@ -306,12 +308,11 @@ void storeresults(){
         sprintf(writebuff + strlen(writebuff), "%.6f,",channels_vipf[n].import_counter);
         sprintf(writebuff + strlen(writebuff), "%.6f\r\n",channels_vipf[n].export_counter);
 
-        UINT bytesWrote;
         fres = f_write(&fil, writebuff, strlen(writebuff), &bytesWrote);
         if(fres == FR_OK) {
-            myprintf("Wrote %i bytes to 'write.txt'!\r\n", bytesWrote);
+            uartprintf("Wrote %i bytes to 'write.txt'!\r\n", bytesWrote);
         } else {
-            myprintf("f_write error (%i)\r\n");
+            uartprintf("f_write error (%i)\r\n");
         }
 
         // Close the file when done
@@ -320,6 +321,10 @@ void storeresults(){
 
     // We're done, so de-mount the drive
     f_mount(NULL, "", 0);
+
+}
+
+void updatePWM(){
 
 }
 
@@ -371,7 +376,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-      // Calculate averages and transmit data to base station, ensure this can run constantly or the process will fail.
+      // Calculate averages and transmit data to base station
+      // Ensure this can run constantly or the process will fail. DO NOT ADD BLOCKING CODE TO THIS WHILE LOOP
       if (newcycle) {
           addcycle();
       }
